@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import './assets/style.css';
 import router from "./router"; //  Importo il router
+import { logout } from './utils/auth';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { 
@@ -32,3 +33,8 @@ library.add(
 const app = createApp(App) ;
 app.component('font-awesome-icon' , FontAwesomeIcon);
 app.use(router).mount("#app");
+
+// Aggiungi un listener per l'evento beforeunload per rimuovere il token quando l'app viene chiusa
+window.addEventListener('beforeunload', () => {
+  logout();
+});
