@@ -9,7 +9,7 @@
           </svg>
         </div>
         <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Modifica Profilo</h1>
-        <p class="text-white mt-2">Aggiorna le tue informazioni personali</p>
+        <p class="text-white mt-2">{{ isOrganization ? 'Aggiorna le informazioni della tua organizzazione' : 'Aggiorna le tue informazioni personali' }}</p>
       </div>
 
       <!-- Profile Form -->
@@ -54,6 +54,81 @@
               </div>
             </div>
 
+            <!-- Phone Field (for both users and organizations) -->
+            <div class="relative">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Telefono {{ isOrganization ? '(obbligatorio)' : '(opzionale)' }}</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </div>
+                <input 
+                  v-model="profile.phone"
+                  class="pl-10 input-field"
+                  type="tel"
+                  placeholder="+39 123 456 7890"
+                  :required="isOrganization"
+                />
+              </div>
+            </div>
+
+            <!-- Organization-specific fields -->
+            <div v-if="isOrganization" class="space-y-6">
+              <!-- Address Field -->
+              <div class="relative">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Indirizzo (obbligatorio)</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <input 
+                    v-model="profile.indirizzo"
+                    class="pl-10 input-field"
+                    type="text"
+                    placeholder="Via Roma 123, 38122 Trento TN"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Description Field -->
+              <div class="relative">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Descrizione (obbligatorio)</label>
+                <div class="relative">
+                  <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <textarea 
+                    v-model="profile.descrizione"
+                    class="pl-10 input-field textarea-field"
+                    placeholder="Descrivi di cosa si occupa la tua organizzazione..."
+                    required
+                    rows="4"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- User-specific fields -->
+            <div v-if="!isOrganization" class="space-y-6">
+              <!-- Position Checkbox -->
+              <div class="relative">
+                <div class="flex items-center">
+                  <input 
+                    v-model="profile.posizione"
+                    type="checkbox"
+                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  />
+                </div>
+              </div>
+            </div>
+
             <!-- Password Field -->
             <div class="relative">
               <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
@@ -84,7 +159,7 @@
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
               <span v-if="isSaving">Salvataggio...</span>
-              <span v-else>Salva Modifiche</span>
+              <span v-else">Salva Modifiche</span>
             </button>
           </div>
         </form>
@@ -128,9 +203,14 @@ export default {
       profile: {
         username: '',
         email: '',
-        password: ''
+        password: '',
+        phone: '',
+        indirizzo: '', // for organizations
+        descrizione: '', // for organizations
+        posizione: false // for users
       },
       userId: null,
+      isOrganization: false,
       isSaving: false,
       showSuccess: false,
       showError: false,
@@ -138,13 +218,26 @@ export default {
     }
   },
   mounted() {
-    // Get user data from sessionStorage
     const userData = sessionStorage.getItem('userData');
+    
     if (userData) {
       const user = JSON.parse(userData);
       this.userId = user._id;
+      this.isOrganization = user.accountType === 'organization' || user.accountType === 'org';
+      
+      // Set common fields
       this.profile.username = user.username;
       this.profile.email = user.email;
+      this.profile.phone = user.phone || '';
+      
+      // Set organization-specific fields
+      if (this.isOrganization) {
+        this.profile.indirizzo = user.indirizzo || '';
+        this.profile.descrizione = user.descrizione || '';
+      } else {
+        // Set user-specific fields
+        this.profile.posizione = user.posizione || false;
+      }
     }
   },
   methods: {
@@ -153,19 +246,34 @@ export default {
       try {
         const updateData = {
           username: this.profile.username,
-          email: this.profile.email
+          email: this.profile.email,
+          phone: this.profile.phone
         };
+        
+        // Add organization-specific fields
+        if (this.isOrganization) {
+          updateData.indirizzo = this.profile.indirizzo;
+          updateData.descrizione = this.profile.descrizione;
+        } else {
+          // Add user-specific fields
+          updateData.posizione = this.profile.posizione;
+        }
         
         // Only include password if it's not empty
         if (this.profile.password) {
           updateData.password = this.profile.password;
         }
 
-        const response = await api.put(`/users/${this.userId}`, updateData);
+        // Use the correct endpoint based on account type
+        const endpoint = this.isOrganization ? `/orgs/${this.userId}` : `/users/${this.userId}`;
+        const response = await api.put(endpoint, updateData);
         
         if (response.status === 200) {
-          // Update sessionStorage with the updated user
-          sessionStorage.setItem('userData', JSON.stringify(response.data.user));
+          // Update sessionStorage with the updated user/organization
+          const updatedData = this.isOrganization ? response.data.organization : response.data.user;
+          const originalUserData = JSON.parse(sessionStorage.getItem('userData'));
+          updatedData.accountType = originalUserData.accountType;
+          sessionStorage.setItem('userData', JSON.stringify(updatedData));
           
           // Show success animation
           this.showSuccess = true;
@@ -272,5 +380,12 @@ export default {
 }
 .animate-pulse-once {
   animation: pulse-once 0.5s ease-in-out;
+}
+.textarea-field {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+  padding-top: 12px;
 }
 </style>

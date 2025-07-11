@@ -51,6 +51,12 @@ const routes = [
     meta: { title: 'Modifica Profilo' }
   },
   {
+    path: '/pannello-controllo',
+    name: 'pannello-controllo',
+    component: () => import('@/components/panelloControllo/PanelloControllo.vue'),
+    meta: { title: 'Pannello di Controllo' }
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/components/login/Login.vue'),

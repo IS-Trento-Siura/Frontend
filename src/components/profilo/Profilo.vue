@@ -1,5 +1,98 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-r from-blue-400 via-indigo-600 to-purple-700 py-12">
+  <div class="min-h-screen bg-gradient-to-br from-blue-400 via-indigo-600 to-purple-700 py-12">
+    <!-- Notifica di successo stilizzata -->
+    <div v-if="showSuccessNotification" class="fixed top-6 right-6 bg-gradient-to-r from-green-400 to-green-600 text-white px-8 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 ease-out animate-slide-in border border-green-300">
+      <div class="flex items-center space-x-3">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-semibold">{{ successMessage }}</p>
+        </div>
+        <div class="flex-shrink-0">
+          <button @click="showSuccessNotification = false" class="text-white hover:text-green-100 transition-colors duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifica di errore stilizzata -->
+    <div v-if="showErrorNotification" class="fixed top-6 right-6 bg-gradient-to-r from-red-400 to-red-600 text-white px-8 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 ease-out animate-slide-in border border-red-300">
+      <div class="flex items-center space-x-3">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-semibold">{{ errorMessage }}</p>
+        </div>
+        <div class="flex-shrink-0">
+          <button @click="showErrorNotification = false" class="text-white hover:text-red-100 transition-colors duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modale di Conferma Eliminazione Account -->
+    <div v-if="showDeleteAccountModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all duration-300 ease-out scale-100">
+        <div class="text-center">
+          <div class="mx-auto bg-red-100 rounded-full h-20 w-20 flex items-center justify-center mb-6">
+            <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Elimina Account</h3>
+          <p class="text-gray-600 mb-8">Sei sicuro di voler eliminare definitivamente il tuo account? Questa azione è irreversibile e comporterà la perdita di tutti i tuoi dati.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <button @click="showDeleteAccountModal = false" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition">
+            Annulla
+          </button>
+          <button @click="deleteAccountConfirmed" :disabled="deleting" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
+            <span v-if="deleting">Eliminazione...</span>
+            <span v-else>Sì, elimina</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale di Conferma Eliminazione -->
+    <div v-if="showConfirmModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all duration-300 ease-out scale-100">
+        <div class="text-center">
+          <div class="mx-auto bg-red-100 rounded-full h-16 w-16 flex items-center justify-center mb-6">
+            <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Sei sicuro?</h3>
+          <p class="text-gray-600 mb-8">Vuoi davvero eliminare questa segnalazione? L'azione è irreversibile.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <button @click="showConfirmModal = false" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition">
+            Annulla
+          </button>
+          <button @click="deleteReportConfirmed" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+            Sì, elimina
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="max-w-4xl mx-auto px-6">
 
       <!-- Messaggio per utenti non autenticati -->
@@ -193,22 +286,33 @@ export default {
       isAuthenticated: false,
       user: null,
       activities: [],
-      deleting: false
+      deleting: false,
+      showSuccessNotification: false,
+      successMessage: '',
+      showErrorNotification: false,
+      errorMessage: '',
+      showConfirmModal: false,
+      reportToDeleteId: null,
+      showDeleteAccountModal: false
     };
   },
   async mounted() {
-    // Verifica se l'utente è autenticato
-    this.isAuthenticated = !!localStorage.getItem('authToken');
-    
-    // Recupera i dati utente da sessionStorage
-    const userData = sessionStorage.getItem('userData');
-    console.log('userData in sessionStorage:', userData); // 👈 debug
-    if (userData) {
-      this.user = JSON.parse(userData);
+    await this.initializeUser();
+  },
+  methods: {
+    async initializeUser() {
+      this.isAuthenticated = !!sessionStorage.getItem('authToken');
+      const userData = sessionStorage.getItem('userData');
       
-      // Fetch user reports
+      if (userData) {
+        this.user = JSON.parse(userData);
+        await this.fetchUserReports();
+      }
+    },
+    
+    async fetchUserReports() {
       try {
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
         const response = await api.get('/reports/mine', {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -223,88 +327,104 @@ export default {
         }));
       } catch (error) {
         console.error('Error fetching user reports:', error);
-      }
-    }
-  },
-    methods: {
-      confirmDeleteReport(reportId) {
-        if (confirm('Sei sicuro di voler eliminare questa segnalazione? Questa azione è irreversibile.')) {
-          this.deleteReport(reportId);
-        }
-      },
-      
-      async deleteReport(reportId) {
-        try {
-          const token = localStorage.getItem('authToken');
-          await api.delete(`/reports/${reportId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          
-          // Remove the deleted report from activities
-          this.activities = this.activities.filter(activity => activity.id !== reportId);
-        } catch (error) {
-          console.error('Error deleting report:', error);
-          alert(`Errore durante l'eliminazione: ${error.response?.data?.message || error.message}`);
-        }
-      },
-      
-      formatDate(dateString) {
-      const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-      return new Date(dateString).toLocaleDateString('it-IT', options);
-    },
-    confirmDelete() {
-      if (confirm('Sei sicuro di voler eliminare il tuo account? Questa azione è irreversibile e cancellerà tutti i tuoi dati.')) {
-        this.deleteAccount();
+        this.showError('Errore nel caricamento delle segnalazioni');
       }
     },
     
-    async deleteAccount() {
-      this.deleting = true;
+    // Report management
+    confirmDeleteReport(reportId) {
+      this.reportToDeleteId = reportId;
+      this.showConfirmModal = true;
+    },
+    
+    deleteReportConfirmed() {
+      this.deleteReport(this.reportToDeleteId);
+      this.showConfirmModal = false;
+      this.reportToDeleteId = null;
+    },
+    
+    async deleteReport(reportId) {
       try {
-        // Chiamata API usando Axios con cookie automatici
-        const response = await api.delete(`/users/${this.user._id}`);
-
-        if (response.status === 200) {
-          // Pulisci localStorage/sessionStorage come in logout()
-          localStorage.removeItem('authToken');
-          sessionStorage.removeItem('userData');
-
-          // Redirect dopo un breve ritardo
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
-        } else {
-          alert(`Errore durante l'eliminazione dell'account: ${response.data.message || 'Errore sconosciuto'}`);
-        }
+        const token = sessionStorage.getItem('authToken');
+        await api.delete(`/reports/${reportId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        this.activities = this.activities.filter(activity => activity.id !== reportId);
+        this.showSuccess('Segnalazione eliminata con successo!');
+        
+      } catch (error) {
+        console.error('Error deleting report:', error);
+        this.showError(`Errore durante l'eliminazione: ${error.response?.data?.message || error.message}`);
+      }
+    },
+    
+    // Account management
+    confirmDelete() {
+      this.showDeleteAccountModal = true;
+    },
+    
+    deleteAccountConfirmed() {
+      this.showDeleteAccountModal = false;
+      this.deleteAccount();
+    },
+    
+    async deleteAccount() {
+      try {
+        this.deleting = true;
+        const token = sessionStorage.getItem('authToken');
+        const userData = JSON.parse(sessionStorage.getItem('userData'));
+        
+        const endpoint = userData.descrizione ? `/orgs/${userData._id}` : `/users/${userData._id}`;
+        
+        await api.delete(endpoint, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        this.showSuccess('Account eliminato con successo!');
+        
+        setTimeout(() => {
+          sessionStorage.clear();
+          window.location.href = '/';
+        }, 2000);
+        
       } catch (error) {
         console.error('Errore durante l\'eliminazione dell\'account:', error);
-        alert(`Errore: ${error.response?.data?.message || error.message}`);
+        this.showError('Errore durante l\'eliminazione dell\'account. Riprova.');
       } finally {
         this.deleting = false;
       }
     },
-
     
-    async logout() {
-      try {
-        // No need for token in header since backend uses cookies
-        const response = await api.post('/users/logout');
-
-      if (response.status === 200) {
-        localStorage.removeItem('authToken');
-        sessionStorage.removeItem('userData');
-        setTimeout(() => {
-              window.location.href = '/';
-        }, 1000);
-      } 
-      else {
-          alert(`Errore nel logout: ${response.data.message || 'Errore sconosciuto'}`);
-        }
-      } catch (error) {
-        alert(`Errore nel logout: ${error.response?.data?.message || error.message}`);
-      }
+    logout() {
+      logout();
+      sessionStorage.removeItem('userData');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1000);
     },
-
+    
+    // Utility methods
+    formatDate(dateString) {
+      const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+      return new Date(dateString).toLocaleDateString('it-IT', options);
+    },
+    
+    showSuccess(message) {
+      this.successMessage = message;
+      this.showSuccessNotification = true;
+      setTimeout(() => {
+        this.showSuccessNotification = false;
+      }, 3000);
+    },
+    
+    showError(message) {
+      this.errorMessage = message;
+      this.showErrorNotification = true;
+      setTimeout(() => {
+        this.showErrorNotification = false;
+      }, 5000);
+    }
   }
 }
 </script>
@@ -361,68 +481,30 @@ input:checked + .slider:before {
   opacity: 0;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Animazione migliorata per la notifica */
+@keyframes slideIn {
+  0% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-10px) scale(1.05);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
 }
 
-.card {
-  background-color: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  padding: 24px;
+.animate-slide-in {
+  animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.btn {
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* Stili per i toggle switch (se necessari altrove, altrimenti si possono rimuovere) */
+.relative.inline-block input:checked + span:last-child {
+  transform: translateX(1.25rem); /* 20px */
 }
-
-.btn-primary {
-  background-color: #3B82F6;
-  color: white;
-  border: none;
-}
-
-.btn-primary:hover {
-  background-color: #2563EB;
-}
-
-.btn-secondary {
-  background-color: white;
-  color: #3B82F6;
-  border: 1px solid #3B82F6;
-}
-
-.btn-secondary:hover {
-  background-color: #EFF6FF;
-}
-
-.btn-danger {
-  background-color: #EF4444;
-  color: white;
-  border: none;
-}
-
-.btn-danger:hover {
-  background-color: #DC2626;
-}
-
-.input-field {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid #D1D5DB;
-  background-color: #F9FAFB;
-  transition: all 0.2s ease;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: #3B82F6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+.relative.inline-block input:checked + span:first-of-type {
+  background-color: #4f46e5; /* indigo-600 */
 }
 </style>

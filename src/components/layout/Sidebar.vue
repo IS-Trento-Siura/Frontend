@@ -20,7 +20,8 @@
 export default {
   props: {
     routes: Array,
-    isAuthenticated: Boolean
+    isAuthenticated: Boolean,
+    userAccountType: String
   },
   data() {
     return {
@@ -30,18 +31,30 @@ export default {
   watch: {
     isAuthenticated: {
       immediate: true,
-      handler(newVal) {
-        this.updateVisibleRoutes(newVal);
+      handler() {
+        this.updateVisibleRoutes();
+      }
+    },
+    userAccountType: {
+      immediate: true,
+      handler() {
+        this.updateVisibleRoutes();
       }
     }
   },
   methods: {
-    updateVisibleRoutes(authStatus) {
+    updateVisibleRoutes() {
       this.visibleRoutes = this.routes.filter(route => {
         // Show login only when not authenticated
         if (route.name === 'login') {
-          return !authStatus;
+          return !this.isAuthenticated;
         }
+        
+        // Show pannello-controllo only for org users
+        if (route.requiresOrg) {
+          return this.isAuthenticated && this.userAccountType === 'org';
+        }
+        
         return true;
       });
     }

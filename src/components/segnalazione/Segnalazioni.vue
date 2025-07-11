@@ -61,11 +61,11 @@
                 class="input-field"
               >
                 <option value="" disabled selected>Seleziona una categoria</option>
-                <option value="sicurezza">Sicurezza</option>
-                <option value="infrastrutture">Infrastrutture</option>
-                <option value="ambiente">Ambiente</option>
-                <option value="traffico">Traffico</option>
-                <option value="altro">Altro</option>
+                <option value="Sicurezza">Sicurezza</option>
+                <option value="Infrastrutture">Infrastrutture</option>
+                <option value="Ambiente">Ambiente</option>
+                <option value="Traffico">Traffico</option>
+                <option value="Altro">Altro</option>
               </select>
             </div>
 
@@ -228,6 +228,7 @@
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '@/utils/api';
+import { isAuthenticated } from '@/utils/auth'; // Importa isAuthenticated da auth.js
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -235,7 +236,9 @@ export default {
   name: 'SegnalazioniView',
   setup() {
     const route = useRoute();
-    const isAuthenticated = ref(false);
+    // Rimuovi questa riga:
+    // const isAuthenticated = ref(false);
+    
     const successMessage = ref('');
     const report = ref({
       title: '',
@@ -246,9 +249,10 @@ export default {
       lng: ''
     });
     
-    onMounted(() => {
-      isAuthenticated.value = !!localStorage.getItem('authToken');
-    });
+    // Rimuovi questo onMounted che causa il problema:
+    // onMounted(() => {
+    //   isAuthenticated.value = !!localStorage.getItem('authToken');
+    // });
     
     const reports = ref([]);
     const currentReport = ref(null);
@@ -264,9 +268,11 @@ export default {
           title: report.title,
           description: report.description,
           category: report.tags,
-          status: report.status || 'Ricevuta',
+          status: report.status || 'pending',
           date: report.createdAt,
-          user: report.user?.username || 'Utente'
+          // Logica per mostrare username solo se ha telefono
+          user: response.data.organization?.name || 
+                (response.data.user && response.data.userPhone ? response.data.user : 'Utente')
         }));
       } catch (error) {
         console.error('Error fetching reports:', error);
@@ -284,9 +290,10 @@ export default {
           title: response.data.title,
           description: response.data.description,
           category: response.data.tags,
-          status: response.data.status || 'Ricevuta',
+          status: response.data.status || 'pending',
           date: response.data.createdAt,
-          user: response.data.user?.username || 'Utente'
+          // Stessa logica per i dettagli
+          user: (response.data.user && response.data.phone ? response.data.user : 'Utente')
         };
         showReportDetails.value = true;
       } catch (error) {
@@ -322,15 +329,16 @@ export default {
     });
     
     async function submitReport() {
-      // Get auth token
-      const token = localStorage.getItem('authToken');
+      // Cambia anche qui da localStorage a sessionStorage
+      const token = sessionStorage.getItem('authToken');
       
       // Prepare payload
+      // Nel metodo submitReport
       const payload = {
         reportData: {
           title: report.value.title,
           description: report.value.description,
-          tags: report.value.category,
+          tags: report.value.category, // ← Ora corretto: invia nel campo tags
           location: {
             lat: parseFloat(report.value.lat),
             lng: parseFloat(report.value.lng)
@@ -424,6 +432,13 @@ export default {
     
     function statusClasses(status) {
       switch (status.toLowerCase()) {
+        case 'pending':
+          return 'bg-yellow-100 text-yellow-700';
+        case 'in_progress':
+          return 'bg-blue-100 text-blue-700';
+        case 'resolved':
+          return 'bg-green-100 text-green-700';
+        // Mantieni compatibilità con i vecchi stati
         case 'ricevuta':
           return 'bg-yellow-100 text-yellow-700';
         case 'in lavorazione':
@@ -523,7 +538,7 @@ export default {
     }
 
     return {
-      isAuthenticated,
+      isAuthenticated, // Usa quello importato da auth.js
       successMessage,
       report,
       submitReport,

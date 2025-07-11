@@ -4,6 +4,7 @@
       :routes="routes"
       :current-route="$route.name"
       :isAuthenticated="isAuthenticated"
+      :userAccountType="userAccountType"
       @navigate="navigateTo"
     />
 
@@ -18,7 +19,7 @@
 
 <script>
 import AppSidebar from '@/components/layout/Sidebar.vue'
-import { isAuthenticated } from '@/utils/auth'
+import { isAuthenticated, getUserAccountType } from '@/utils/auth'
 
 export default {
   components: {
@@ -27,6 +28,9 @@ export default {
   computed: {
     isAuthenticated() {
       return isAuthenticated.value
+    },
+    userAccountType() {
+      return getUserAccountType()
     }
   },
   data() {
@@ -36,6 +40,7 @@ export default {
         { name: 'mappa', label: '🗺️ Mappa' },
         { name: 'segnalazioni', label: '⚠️ Segnalazioni' },
         { name: 'profilo', label: '👤 Profilo' },
+        { name: 'pannello-controllo', label: '⚙️ Pannello di Controllo', requiresOrg: true },
         { name: 'login', label: '🔑 Login' }
       ]
     }

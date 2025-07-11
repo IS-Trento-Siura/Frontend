@@ -1,16 +1,86 @@
 <template>
-  <div class="flex flex-col p-6 bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 rounded-xl shadow-lg max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row gap-8">
+  <div class="flex flex-col p-4 bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 rounded-xl shadow-lg max-w-7xl mx-auto">
+    
+    <!-- Filtri Orizzontali in Cima -->
+    <div class="mb-6 p-4 bg-white rounded-2xl shadow-lg border border-gray-100">
+      <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"></path>
+        </svg>
+        Filtri di Ricerca
+      </h3>
       
-      <!-- Mappa a sinistra -->
-      <div class="md:w-2/3 relative z-0">
-        <div id="map" class="map-container h-[33rem] rounded-xl shadow-md border border-indigo-300 relative z-0"></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
         
-        <!-- Controllo raggio -->
-        <div class="mt-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-800 mb-3 select-none">
-            Raggio d'azione: <span class="text-indigo-600">{{ currentRadius }} metri</span>
+        <!-- Filtro per Tipologia -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="block text-sm font-semibold text-gray-700 flex items-center">
+              <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+              </svg>
+              Tipologia
+            </label>
+            <button 
+              v-if="selectedTypes.length > 0"
+              @click="selectedTypes = []"
+              class="text-xs text-red-500 hover:text-red-700 font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition-colors"
+            >
+              Pulisci
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <button 
+              v-for="type in reportTypes" 
+              :key="type"
+              @click="toggleReportType(type)"
+              :class="[
+                'px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 transform hover:scale-105',
+                selectedTypes.includes(type) 
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+              ]"
+            >
+              {{ type }}
+            </button>
+          </div>
+        </div>
+    
+        <!-- Filtro per Periodo -->
+        <div class="space-y-2">
+          <label for="time-filter" class="block text-sm font-semibold text-gray-700 flex items-center">
+            <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Periodo
           </label>
+          <select 
+            id="time-filter" 
+            v-model="timeFilter"
+            class="w-full p-2 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-all duration-200 text-sm"
+          >
+            <option value="all">🕐 Tutto</option>
+            <option value="day">📅 Ultime 24 ore</option>
+            <option value="week">📊 Ultima settimana</option>
+            <option value="month">📈 Ultimo mese</option>
+          </select>
+        </div>
+
+        <!-- Controllo Raggio d'Azione -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="flex items-center text-sm font-semibold text-gray-700">
+              <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              Raggio d'azione
+            </label>
+            <span class="bg-indigo-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-md">
+              {{ currentRadius }}m
+            </span>
+          </div>
+          
           <input 
             type="range" 
             min="100" 
@@ -18,49 +88,108 @@
             step="100"
             v-model.number="currentRadius"
             @change="updateRadius"
-            class="w-full h-3 bg-indigo-200 rounded-lg appearance-none cursor-pointer transition duration-300 ease-in-out hover:bg-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full h-2 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-full appearance-none cursor-pointer slider"
           />
-          <div class="flex justify-between text-xs text-gray-500 mt-1 select-none font-mono">
-            <span>100m</span>
-            <span>2500m</span>
-            <span>5000m</span>
+          
+          <div class="flex justify-between text-xs text-gray-600 font-medium">
+            <span class="bg-white px-1 py-0.5 rounded shadow-sm">100m</span>
+            <span class="bg-white px-1 py-0.5 rounded shadow-sm">2.5km</span>
+            <span class="bg-white px-1 py-0.5 rounded shadow-sm">5km</span>
+          </div>
+        </div>
+    
+      </div>
+    </div>
+
+    <!-- Contenuto Principale: Mappa e Lista -->
+    <div class="flex flex-col md:flex-row gap-6">
+      
+      <!-- Mappa a sinistra -->
+      <div class="lg:w-2/3 space-y-4">
+        <div class="relative">
+          <div id="map" class="map-container h-[28rem] rounded-2xl shadow-xl border-2 border-indigo-200 overflow-hidden"></div>
+          
+          <!-- Badge di stato geolocalizzazione -->
+          <div v-if="isLocating" class="absolute top-4 left-4 bg-blue-500 text-white px-3 py-2 rounded-full text-sm font-medium shadow-lg flex items-center">
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Localizzazione...
           </div>
         </div>
       </div>
       
       <!-- Lista segnalazioni a destra -->
-      <div class="md:w-1/3">
-        <div class="bg-white p-5 rounded-xl shadow-md h-full flex flex-col">
-          <h2 class="text-2xl font-extrabold mb-5 text-gray-900 tracking-wide select-none">Segnalazioni recenti</h2>
+      <div class="lg:w-1/3">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 h-full flex flex-col overflow-hidden">
           
-          <div v-if="loadingReports" class="text-center py-8 text-indigo-600 font-semibold">
-            <p>Caricamento segnalazioni...</p>
+          <!-- Header della lista -->
+          <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 text-white">
+            <h2 class="text-lg font-bold flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+              Segnalazioni Recenti
+            </h2>
+            <p class="text-indigo-100 text-sm mt-1">
+              {{ filteredReports.length }} segnalazioni trovate
+            </p>
           </div>
           
-          <div v-else-if="reports.length === 0" class="text-center py-8 text-gray-400 italic">
-            <p>Nessuna segnalazione trovata</p>
+          <!-- Contenuto lista -->
+          <div class="flex-1">
+            <div class="space-y-1 p-4">
+              <div v-if="loadingReports" class="text-center py-8">
+                <svg class="animate-spin mx-auto h-8 w-8 text-indigo-600 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-indigo-600 font-semibold text-sm">Caricamento segnalazioni...</p>
+              </div>
+              
+              <div v-else-if="filteredReports.length === 0" class="text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0120 12a8 8 0 00-16 0 7.962 7.962 0 002 5.291z"></path>
+                </svg>
+                <p class="text-gray-500 font-medium text-sm">Nessuna segnalazione trovata</p>
+                <p class="text-gray-400 text-xs mt-1">Prova a modificare i filtri</p>
+              </div>
+              
+              <div v-else class="space-y-3 max-h-[24rem] overflow-y-auto pr-2 custom-scrollbar">
+                <div 
+                  v-for="report in filteredReports" 
+                  :key="report._id || report.id"
+                  class="group border border-gray-200 rounded-xl p-3 hover:shadow-lg cursor-pointer transition-all duration-300 hover:border-indigo-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50"
+                  @click.stop="showReportDetailsModal(report)"
+                >
+                  <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-bold text-gray-900 truncate max-w-[70%] group-hover:text-indigo-700 transition-colors text-sm">
+                      {{ report.title }}
+                    </h3>
+                    <span class="text-xs bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 px-2 py-1 rounded-full font-semibold border border-indigo-200">
+                      {{ formatTimeAgo(report.createdAt) }}
+                    </span>
+                  </div>
+                  
+                  <p class="text-xs text-gray-600 mb-2 line-clamp-2 leading-relaxed">
+                    {{ report.description }}
+                  </p>
+                  
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-500 font-medium">
+                      📅 {{ formatDate(report.createdAt) }}
+                    </span>
+                    <span v-if="report.tags" class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-medium">
+                      🏷️ {{ report.tags }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <ul v-else class="space-y-4 overflow-y-auto max-h-[30rem] pr-2">
-            <li 
-              v-for="report in reports" 
-              :key="report.id"
-              class="border border-gray-300 rounded-xl p-4 hover:bg-indigo-50 cursor-pointer transition-shadow shadow-sm hover:shadow-md"
-              @click.stop="showReportDetailsModal(report)"
-            >
-              <div class="flex justify-between items-start">
-                <h3 class="font-semibold text-gray-900 truncate max-w-[70%]">{{ report.title }}</h3>
-                <span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-mono select-none">
-                  {{ formatDistance(report.distance) }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-600 mt-2 line-clamp-3">{{ report.description }}</p>
-              <div class="flex items-center mt-3">
-                <span class="text-xs text-gray-400 italic select-none">{{ formatDate(report.createdAt) }}</span>
-              </div>
-            </li>
-          </ul>
         </div>
+      </div>
       </div>
 
     </div>
@@ -118,7 +247,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 
@@ -126,7 +254,7 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import api from '@/utils/api'; // Importa l'API per le richieste HTTP
-import { formatDistance } from 'date-fns';
+import { formatDistance, formatDistanceToNow } from 'date-fns';
 import { it } from 'date-fns/locale'; // Importa la localizzazione italiana
 
 export default {
@@ -135,15 +263,78 @@ export default {
     return {
       map: null,
       userLocation: null,
-      currentRadius: 1000, // Raggio predefinito di 1000 metri
+      currentRadius: 1000,
+      allReports: [],
       reports: [],
+      reportTypes: ['Sicurezza', 'Infrastruttura', 'Ambiente', 'Traffico', 'Altro'],
+      selectedTypes: [],
+      timeFilter: 'all',
       loadingReports: false,
       circleLayer: null,
-      isLocating: false, // Aggiunto stato per tracciare la geolocalizzazione
-      reportMarkers: [], // Per memorizzare i marker delle segnalazioni
+      isLocating: false,
+      reportMarkers: [],
       currentReport: null,
       showReportDetails: false
     };
+  },
+  computed: {
+    filteredReports() {
+      let reports = this.allReports;
+
+      // Filtro per tipologia (tags)
+      if (this.selectedTypes.length > 0) {
+        reports = reports.filter(report => {
+          if (!report.tags) return false;
+          const reportTags = report.tags.toLowerCase().split(',').map(t => t.trim());
+          return this.selectedTypes.some(selectedType => 
+            reportTags.includes(selectedType.toLowerCase())
+          );
+        });
+      }
+
+      // Filtro per periodo
+      if (this.timeFilter !== 'all') {
+        const now = new Date();
+        const filterDate = new Date();
+        if (this.timeFilter === 'day') {
+          filterDate.setDate(now.getDate() - 1);
+        } else if (this.timeFilter === 'week') {
+          filterDate.setDate(now.getDate() - 7);
+        } else if (this.timeFilter === 'month') {
+          filterDate.setMonth(now.getMonth() - 1);
+        }
+        reports = reports.filter(report => new Date(report.createdAt) >= filterDate);
+      }
+
+      // Filtro per raggio d'azione (usa currentRadius)
+      if (this.userLocation) {
+        reports = reports.filter(report => {
+          if (!report.location || !report.location.lat || !report.location.lng) {
+            return false;
+          }
+          
+          const distance = this.calculateDistance(
+            this.userLocation[0], 
+            this.userLocation[1],
+            report.location.lat, 
+            report.location.lng
+          );
+          
+          return distance <= this.currentRadius; // USA currentRadius invece di maxDistance
+        });
+      }
+
+      return reports;
+    }
+  },
+  watch: {
+    filteredReports: {
+      handler(newReports) {
+        this.updateReportMarkers(newReports);
+      },
+      deep: true,
+      immediate: true
+    }
   },
   mounted() {
     // Get user data from session storage
@@ -152,6 +343,13 @@ export default {
       this.user = JSON.parse(userData);
       console.log('User data loaded:', this.user);
     }
+
+    // Carica il raggio salvato dalla sessione
+    const savedRadius = sessionStorage.getItem('mapRadius');
+    if (savedRadius) {
+      this.currentRadius = parseInt(savedRadius, 10);
+    }
+
     this.initMap();
 
     // Listen for report updates
@@ -163,6 +361,46 @@ export default {
     window.removeEventListener('report-updated', this.handleReportUpdated);
   },
   methods: {
+    updateReportMarkers(reports) {
+      // Rimuovi i marker esistenti
+      this.reportMarkers.forEach(marker => this.map.removeLayer(marker));
+      this.reportMarkers = [];
+
+      // Crea un'icona rossa personalizzata
+      const redIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+
+      // Aggiungi nuovi marker per le segnalazioni filtrate
+      reports.forEach(report => {
+        if (report.location && report.location.lat && report.location.lng) {
+          const lat = report.location.lat;
+          const lng = report.location.lng;
+          
+          // Verifica che le coordinate siano valide
+          if (!isNaN(lat) && !isNaN(lng)) {
+            const marker = L.marker([lat, lng], { icon: redIcon })
+              .addTo(this.map)
+              .bindPopup(`<b>${report.title}</b><br>${report.description}<br><small>Categoria: ${report.tags}</small>`);
+            this.reportMarkers.push(marker);
+          }
+        }
+      });
+    },
+    toggleReportType(type) {
+      const index = this.selectedTypes.indexOf(type);
+      if (index > -1) {
+        this.selectedTypes.splice(index, 1);
+      } else {
+        this.selectedTypes.push(type);
+      }
+      // Rimuovi questa chiamata manuale - il watcher si occuperà dell'aggiornamento
+    },
     initMap() {
       // Attendi che il DOM sia completamente pronto
       this.$nextTick(() => {
@@ -273,97 +511,22 @@ export default {
     updateRadius() {
       this.updateCircle();
       this.fetchReports(); // Questo aggiornerà anche i marker in base al nuovo raggio
+      // Salva il raggio nella sessione
+      sessionStorage.setItem('mapRadius', this.currentRadius);
     },
     
     async fetchReports() {
       this.loadingReports = true;
       
       try {
-        // First fetch all reports for the list
-        const allReportsResponse = await api.get('/reports');
+        // Semplifica: prendi tutti i report e salvali in allReports
+        const response = await api.get('/reports');
+        this.allReports = response.data;
+        this.reports = this.allReports; // Per compatibilità
         
-        // Then fetch radius-filtered reports for the map if we have user location
-        let radiusFilteredReports = [];
-        if (this.userLocation) {
-          const params = {
-            lat: this.userLocation.lat,
-            lng: this.userLocation.lng,
-            radius: this.currentRadius
-          };
-          const radiusResponse = await api.get('/reports', { params });
-          radiusFilteredReports = radiusResponse.data;
-        }
-        
-        // Show only reports within radius in the list, calculate distance only for those with valid locations
-        this.reports = radiusFilteredReports.map(report => {
-          if (report.location && report.location.lat && report.location.lng) {
-            return {
-              ...report,
-              distance: this.userLocation 
-                ? this.calculateDistance(
-                    this.userLocation.lat,
-                    this.userLocation.lng,
-                    report.location.lat,
-                    report.location.lng
-                  )
-                : null
-            };
-          }
-          return {
-            ...report,
-            distance: null
-          };
-        });
-
-        // Clear existing markers
-        this.clearReportMarkers();
-
-        // Add markers only for reports within the radius
-        radiusFilteredReports.forEach(report => {
-          if (!report.location || !report.location.lat || !report.location.lng) return;
-          
-          const lat = report.location.lat;
-          const lng = report.location.lng;
-          if (isNaN(lat) || isNaN(lng)) return;
-          
-          // Debug report data
-          console.log('Processing report within radius:', report);
-          
-          // Check if this is the user's report
-          const isUserReport = report.user && 
-                             (report.user._id === this.user?._id || 
-                              report.user === this.user?._id);
-          console.log('Is user report:', isUserReport, 'User ID:', this.user?._id, 'Report user:', report.user);
-          
-          // Create custom icon
-          const customIcon = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34]
-          });
-
-          const marker = L.marker([lat, lng], { icon: customIcon }).addTo(this.map);
-          
-          const popupContent = `
-            <div class="p-2">
-              <h3 class="font-bold text-lg">${report.title}</h3>
-              <p class="text-gray-700">${report.description}</p>
-            </div>
-          `;
-          
-          marker.bindPopup(popupContent, {
-            maxWidth: 300,
-            minWidth: 200,
-            className: 'custom-popup'
-          });
-          
-          // Non aprire automaticamente i popup dei marker
-          this.reportMarkers.push(marker);
-        });
+        // Il watcher di filteredReports aggiornerà automaticamente i marker
       } catch (error) {
-        console.error('Errore nel caricamento delle segnalazioni:', error);
-        this.reports = [];
+        console.error('Errore nel recupero delle segnalazioni:', error);
       } finally {
         this.loadingReports = false;
       }
@@ -397,6 +560,10 @@ export default {
       return new Date(dateString).toLocaleDateString(undefined, options);
     },
     
+    formatTimeAgo(dateString) {
+      return formatDistanceToNow(new Date(dateString), { locale: it, includeSeconds: true });
+    },
+    
     clearReportMarkers() {
       this.reportMarkers.forEach(marker => {
         this.map.removeLayer(marker);
@@ -425,8 +592,8 @@ export default {
           const marker = this.reportMarkers.find(m => {
             const markerLatLng = m.getLatLng();
             return markerLatLng && 
-                   markerLatLng.lat === lat && 
-                   markerLatLng.lng === lng;
+               markerLatLng.lat === lat && 
+               markerLatLng.lng === lng;
           });
           if (marker) {
             marker.openPopup();
@@ -464,3 +631,68 @@ export default {
   }
 };
 </script>
+
+
+<style scoped>
+.map-container {
+  position: relative;
+  z-index: 0;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+  border: 2px solid white;
+}
+
+.slider::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+  border: 2px solid white;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #4f46e5, #7c3aed);
+}
+
+.input-field {
+  @apply p-3 border border-gray-300 rounded-lg;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>
