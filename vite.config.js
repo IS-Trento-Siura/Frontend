@@ -1,10 +1,8 @@
 import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -16,14 +14,27 @@ export default defineConfig({
     },
   },
   server: {
-    port : 8080 ,
+    port: 8080,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://backend-qevl.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
       }
     }
   },
-  
+  preview: {
+    port: 8080, 
+    proxy: {
+      '/api': {
+        target: 'https://backend-qevl.onrender.com',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
+  },
+  // Assicurati che le variabili d'ambiente siano caricate correttamente
+  define: {
+    __VITE_API_URL__: JSON.stringify(process.env.VITE_API_URL)
+  }
 })
