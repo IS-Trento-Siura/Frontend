@@ -15,72 +15,118 @@
     <!-- Hero Section -->
     <header class="relative text-white text-center py-24 px-6">
       <div class="relative z-10 animate-fade-in-up">
-        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-white drop-shadow-lg leading-tight">Benvenuti in TrentoSicura</h1>
-        <p class="text-xl md:text-2xl max-w-3xl mx-auto mb-10 font-light text-gray-100 drop-shadow-md leading-relaxed">La vostra piattaforma di riferimento per la sicurezza urbana e le segnalazioni in tempo reale.</p>
-        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-          <RouterLink to="/mappa" class="btn-primary transform hover:scale-105 transition-transform duration-300">
-            <i class="fas fa-map-marked-alt mr-2"></i> Esplora la Mappa
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-white drop-shadow-2xl leading-tight bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">TrentoSicura</h1>
+        <p class="text-xl md:text-3xl max-w-4xl mx-auto mb-12 font-medium text-white drop-shadow-lg leading-relaxed">La piattaforma digitale che rivoluziona la sicurezza urbana attraverso la partecipazione attiva dei cittadini</p>
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+          <RouterLink to="/mappa" class="btn-primary transform hover:scale-110 transition-all duration-300 shadow-2xl">
+            <i class="fas fa-map-marked-alt mr-3"></i> Esplora la Mappa
           </RouterLink>
-          <RouterLink to="/segnalazioni" class="btn-secondary transform hover:scale-105 transition-transform duration-300">
-            <i class="fas fa-bullhorn mr-2"></i> Invia una Segnalazione
+          <RouterLink to="/segnalazioni" class="btn-secondary transform hover:scale-110 transition-all duration-300 shadow-2xl">
+            <i class="fas fa-bullhorn mr-3"></i> Invia una Segnalazione
           </RouterLink>
         </div>
       </div>
     </header>
 
-    <!-- Features Section -->
-    <section class="relative z-10 py-20 px-6">
-      <div class="max-w-7xl mx-auto">
-        <h2 class="text-4xl font-bold text-center mb-16 text-white drop-shadow-lg">Come Funziona</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          <div class="feature-card animate-fade-in" style="animation-delay: 0.1s;">
-            <div class="feature-icon bg-blue-100 text-blue-600">
-              <i class="fas fa-map-signs text-3xl"></i>
-            </div>
-            <h3 class="text-2xl font-semibold mb-4 text-gray-900 leading-tight">Mappa Interattiva</h3>
-            <p class="text-gray-700 leading-relaxed text-base">Visualizzate le segnalazioni in tempo reale sulla nostra mappa dinamica e intuitiva.</p>
+    <!-- Problem Description Section -->
+    <section class="relative z-10 py-20 px-6 bg-white bg-opacity-10 backdrop-blur-sm">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 mb-6 shadow-lg">
+            <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
           </div>
-          <div class="feature-card animate-fade-in" style="animation-delay: 0.2s;">
-            <div class="feature-icon bg-green-100 text-green-600">
-              <i class="fas fa-paper-plane text-3xl"></i>
+          <h2 class="text-4xl md:text-5xl font-bold mb-8 text-white drop-shadow-lg">Il Problema che Risolviamo</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div class="problem-card animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="bg-white bg-opacity-95 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white border-opacity-30">
+              <h3 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-city text-blue-600 mr-3"></i>
+                Sfide della Sicurezza Urbana
+              </h3>
+              <ul class="space-y-4 text-gray-700">
+                <li class="flex items-start">
+                  <i class="fas fa-times-circle text-red-500 mr-3 mt-1 flex-shrink-0"></i>
+                  <span class="font-medium">Comunicazione inefficace tra cittadini e autorità locali</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-times-circle text-red-500 mr-3 mt-1 flex-shrink-0"></i>
+                  <span class="font-medium">Tempi di risposta lunghi per le segnalazioni di sicurezza</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-times-circle text-red-500 mr-3 mt-1 flex-shrink-0"></i>
+                  <span class="font-medium">Mancanza di trasparenza sui problemi del territorio</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-times-circle text-red-500 mr-3 mt-1 flex-shrink-0"></i>
+                  <span class="font-medium">Difficoltà nel monitorare lo stato delle problematiche segnalate</span>
+                </li>
+              </ul>
             </div>
-            <h3 class="text-2xl font-semibold mb-4 text-gray-900 leading-tight">Segnalazioni Rapide</h3>
-            <p class="text-gray-700 leading-relaxed text-base">Inviate segnalazioni dettagliate con foto e geolocalizzazione in pochi semplici passaggi.</p>
           </div>
-          <div class="feature-card animate-fade-in" style="animation-delay: 0.3s;">
-            <div class="feature-icon bg-purple-100 text-purple-600">
-              <i class="fas fa-users text-3xl"></i>
+          
+          <div class="solution-card animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="bg-gradient-to-br from-green-400 to-blue-500 rounded-2xl p-8 shadow-2xl text-white">
+              <h3 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-300 mr-3"></i>
+                La Nostra Soluzione
+              </h3>
+              <ul class="space-y-4">
+                <li class="flex items-start">
+                  <i class="fas fa-check-circle text-green-300 mr-3 mt-1 flex-shrink-0"></i>
+                  <span class="font-medium">Piattaforma digitale unificata per segnalazioni in tempo reale</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-check-circle text-green-300 mr-3 mt-1 flex-shrink-0"></i>
+                  <span class="font-medium">Geolocalizzazione precisa e documentazione fotografica</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-check-circle text-green-300 mr-3 mt-1 flex-shrink-0"></i>
+                  <span class="font-medium">Tracciamento trasparente dello stato delle segnalazioni</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-check-circle text-green-300 mr-3 mt-1 flex-shrink-0"></i>
+                  <span class="font-medium">Coinvolgimento attivo della comunità per una città più sicura</span>
+                </li>
+              </ul>
             </div>
-            <h3 class="text-2xl font-semibold mb-4 text-gray-900 leading-tight">Comunità Attiva</h3>
-            <p class="text-gray-700 leading-relaxed text-base">Unitevi a una comunità di cittadini e autorità per rendere Trento un posto più sicuro.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Stats Section -->
+    <!-- Features Section -->
     <section class="relative z-10 py-20 px-6">
       <div class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-          <div class="stat-item animate-fade-in" style="animation-delay: 0.1s;">
-            <div class="text-5xl font-bold text-white animate-counter drop-shadow-lg">1.2k+</div>
-            <div class="opacity-90 mt-3 text-lg text-gray-100 leading-relaxed">Segnalazioni Ricevute</div>
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-white drop-shadow-lg">Come Funziona</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          <div class="feature-card animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="feature-icon bg-blue-100 text-blue-600">
+              <i class="fas fa-map-signs text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-gray-900 leading-tight">Mappa Interattiva</h3>
+            <p class="text-gray-700 leading-relaxed text-lg font-medium">Visualizzate le segnalazioni in tempo reale sulla nostra mappa dinamica e intuitiva con filtri avanzati.</p>
           </div>
-          <div class="stat-item animate-fade-in" style="animation-delay: 0.2s;">
-            <div class="text-5xl font-bold text-white animate-counter drop-shadow-lg">98%</div>
-            <div class="opacity-90 mt-3 text-lg text-gray-100 leading-relaxed">Tasso di Risoluzione</div>
+          <div class="feature-card animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="feature-icon bg-green-100 text-green-600">
+              <i class="fas fa-paper-plane text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-gray-900 leading-tight">Segnalazioni Rapide</h3>
+            <p class="text-gray-700 leading-relaxed text-lg font-medium">Inviate segnalazioni dettagliate con foto e geolocalizzazione automatica in pochi semplici passaggi.</p>
           </div>
-          <div class="stat-item animate-fade-in" style="animation-delay: 0.3s;">
-            <div class="text-5xl font-bold text-white animate-counter drop-shadow-lg">5.4k+</div>
-            <div class="opacity-90 mt-3 text-lg text-gray-100 leading-relaxed">Utenti Attivi</div>
-          </div>
-          <div class="stat-item animate-fade-in" style="animation-delay: 0.4s;">
-            <div class="text-5xl font-bold text-white animate-counter drop-shadow-lg">24h</div>
-            <div class="opacity-90 mt-3 text-lg text-gray-100 leading-relaxed">Tempo Medio di Risposta</div>
+          <div class="feature-card animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="feature-icon bg-purple-100 text-purple-600">
+              <i class="fas fa-users text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-gray-900 leading-tight">Comunità Attiva</h3>
+            <p class="text-gray-700 leading-relaxed text-lg font-medium">Unitevi a una rete collaborativa di cittadini e autorità per rendere Trento un posto più sicuro per tutti.</p>
           </div>
         </div>
       </div>
     </section>
+
+    
   </div>
 </template>
 
@@ -93,88 +139,127 @@ export default {
 <style scoped>
 /* General Button Styles */
 .btn-primary, .btn-secondary {
-  padding: 14px 28px;
+  padding: 16px 32px;
   border-radius: 50px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  letter-spacing: 1px;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  font-size: 1.1rem;
 }
 
 .btn-primary {
-  background-color: #ffffff;
-  color: #3b82f6; /* blue-500 */
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e40af;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .btn-primary:hover {
-  background-color: #eff6ff; /* blue-50 */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
 }
 
 .btn-secondary {
-  background-color: transparent;
-  color: #d1d5db; /* gray-300 */
-  border: 2px solid #d1d5db; /* gray-300 */
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
 }
 
 .btn-secondary:hover {
-  background-color: rgba(209, 213, 219, 0.1);
-  color: #f9fafb; /* gray-50 */
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
 }
 
 /* Feature Card Styles */
 .feature-card {
-  padding: 40px;
-  border-radius: 16px;
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 48px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  transform: translateY(-15px) scale(1.02);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
 }
 
 .feature-icon {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   margin-left: auto;
   margin-right: auto;
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .feature-card h3 {
-    color: #111827; /* gray-900 */
-    font-weight: 600;
-    line-height: 1.3;
+  color: #111827;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 16px;
 }
 
 .feature-card p {
-    color: #374151; /* gray-700 */
-    font-size: 1rem;
-    line-height: 1.6;
+  color: #374151;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  font-weight: 500;
 }
 
-/* Stats Section Styles */
+/* Problem and Solution Cards */
+.problem-card, .solution-card {
+  transition: all 0.4s ease;
+}
+
+.problem-card:hover, .solution-card:hover {
+  transform: translateY(-10px) scale(1.02);
+}
+
+
+.stat-item {
+  transition: all 0.4s ease;
+  padding: 24px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.stat-item:hover {
+  transform: translateY(-8px) scale(1.05);
+  background: rgba(255, 255, 255, 0.15);
+}
+
 .stat-item .animate-counter {
   transition: all 0.5s ease;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Keyframe Animations */
+/* Enhanced Animations */
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
@@ -183,51 +268,65 @@ export default {
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
+  animation: fade-in-up 1s ease-out forwards;
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { 
+    opacity: 0; 
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
-  animation: fade-in 0.6s ease-in-out forwards;
-  opacity: 0; /* Start hidden */
+  animation: fade-in 0.8s ease-in-out forwards;
+  opacity: 0;
 }
 
 @keyframes float {
   0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
-  50% { transform: translateY(-20px) translateX(15px) rotate(180deg); opacity: 0.5; }
+  50% { transform: translateY(-25px) translateX(20px) rotate(180deg); opacity: 0.4; }
   100% { transform: translateY(0) translateX(0) rotate(360deg); opacity: 0.8; }
 }
 
 .animate-float {
-  animation: float 10s ease-in-out infinite;
+  animation: float 12s ease-in-out infinite;
 }
 
 .animate-float-delayed {
-  animation: float 12s ease-in-out infinite 2s;
+  animation: float 14s ease-in-out infinite 2s;
 }
 
 .animate-float-slow {
-  animation: float 15s ease-in-out infinite;
+  animation: float 18s ease-in-out infinite;
 }
 
 .animate-float-fast {
-  animation: float 8s ease-in-out infinite;
+  animation: float 10s ease-in-out infinite;
 }
 
-/* Additional Typography Improvements */
-.text-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+/* Enhanced Typography */
+.drop-shadow-2xl {
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
 }
 
 .drop-shadow-lg {
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
 
-.drop-shadow-md {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .feature-card {
+    padding: 32px 24px;
+  }
+  
+  .btn-primary, .btn-secondary {
+    padding: 14px 24px;
+    font-size: 1rem;
+  }
 }
 </style>

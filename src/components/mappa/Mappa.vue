@@ -257,6 +257,7 @@ import api from '@/utils/api'; // Importa l'API per le richieste HTTP
 import { formatDistance, formatDistanceToNow } from 'date-fns';
 import { it } from 'date-fns/locale'; // Importa la localizzazione italiana
 
+import markerIcon from '@/assets/marker.png';
 export default {
   name: 'MappaView',
   data() {
@@ -445,9 +446,19 @@ export default {
           this.map.setView(userLatLng, 16);
           this.updateCircle();
           this.fetchReports();
-
-          L.marker(userLatLng).addTo(this.map)
-            .bindPopup(`Sei qui`).openPopup();
+      
+          // Crea un'icona personalizzata per la posizione utente (blu/verde)
+          const userIcon = L.icon({
+            iconUrl: markerIcon,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+          });
+      
+          L.marker(userLatLng, { icon: userIcon })
+            .addTo(this.map)
+            .bindPopup('Sei qui')
+            .openPopup();
             
           setTimeout(() => {
             this.map.invalidateSize();
@@ -486,7 +497,17 @@ export default {
     setFallbackLocation() {
       const fallback = [41.9028, 12.4964]; // Roma
       this.map.setView(fallback, 6);
-      L.marker(fallback).addTo(this.map).bindPopup('Posizione di default: Italia');
+      
+      const userIcon = L.icon({
+        iconUrl: markerIcon,
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34]
+      });
+      
+      L.marker(fallback, { icon: userIcon })
+        .addTo(this.map)
+        .bindPopup('Posizione di default: Italia');
       
       setTimeout(() => {
         this.map.invalidateSize();
@@ -637,49 +658,72 @@ export default {
 .map-container {
   position: relative;
   z-index: 0;
+  transition: all 0.3s ease;
+}
+
+.map-container:hover {
+  transform: scale(1.01);
 }
 
 .slider::-webkit-slider-thumb {
   appearance: none;
-  height: 20px;
-  width: 20px;
+  height: 24px;
+  width: 24px;
   border-radius: 50%;
-  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
-  border: 2px solid white;
+  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4);
+  border: 3px solid white;
+  transition: all 0.3s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.6);
 }
 
 .slider::-moz-range-thumb {
-  height: 20px;
-  width: 20px;
+  height: 24px;
+  width: 24px;
   border-radius: 50%;
-  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
-  border: 2px solid white;
+  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4);
+  border: 3px solid white;
+  transition: all 0.3s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.6);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 3px;
+  background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
+  border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #6366f1, #8b5cf6);
-  border-radius: 3px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(45deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777);
+  transform: scale(1.1);
 }
 
 .input-field {
-  @apply p-3 border border-gray-300 rounded-lg;
+  @apply p-4 border-2 border-gray-300 rounded-2xl transition-all duration-300;
+}
+
+.input-field:hover {
+  @apply border-indigo-300 shadow-md;
 }
 
 .line-clamp-2 {
@@ -694,5 +738,29 @@ export default {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Animazioni aggiuntive */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Effetti hover migliorati */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 </style>

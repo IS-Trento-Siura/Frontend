@@ -1,221 +1,297 @@
 <template>
-  <div class="justify-center min-h-screen bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 py-12 px-4">
-    <div class="max-w-4xl mx-auto">
+  <div class="min-h-screen bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 py-16 px-6 relative overflow-hidden">
+    <!-- Decorative Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute top-20 left-20 w-32 h-32 bg-white bg-opacity-10 rounded-full animate-float"></div>
+      <div class="absolute top-40 right-32 w-24 h-24 bg-white bg-opacity-15 rounded-full animate-float-delayed"></div>
+      <div class="absolute bottom-32 left-40 w-28 h-28 bg-white bg-opacity-8 rounded-full animate-float-slow"></div>
+      <div class="absolute bottom-20 right-20 w-20 h-20 bg-white bg-opacity-20 rounded-full animate-float-fast"></div>
+    </div>
+    
+    <div class="max-w-5xl mx-auto relative z-10">
       
-      <!-- Messaggio per utenti non autenticati -->
-      <div v-if="!isAuthenticated" class="card text-center p-8 mt-10">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Creazione segnalazione</h2>
-        <p class="text-gray-600 mb-6">
-          Effettua prima login
-        </p>
-        <router-link to="/login" class="btn btn-primary inline-block">Vai alla pagina di login</router-link>
+      <!-- Messaggio per utenti non autenticati - Migliorato -->
+      <div v-if="!isAuthenticated" class="card-enhanced text-center p-12 mt-16 backdrop-blur-md">
+        <div class="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">🔐 Accesso Richiesto</h2>
+        <p class="text-gray-600 mb-8 text-lg leading-relaxed">Per creare una segnalazione è necessario effettuare il login al sistema</p>
+        <router-link to="/login" class="btn-enhanced btn-primary-enhanced inline-flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+          </svg>
+          Vai al Login
+        </router-link>
       </div>
 
-      <!-- Form per creazione segnalazione (solo autenticati) -->
+      <!-- Form per creazione segnalazione (solo autenticati) - Migliorato -->
       <div v-if="isAuthenticated">
-        <!-- Titolo with animation -->
-        <div class="text-center mb-10 animate-fade-in">
-          <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Fai una segnalazione</h1>
-          <p class="text-gray-600 mt-2">Aiuta a rendere Trento più sicura segnalando problemi o situazioni critiche</p>
+        <div class="text-center mb-16 animate-fade-in-up">
+          <div class="w-24 h-24 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-8">
+            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent mb-4">📝 Fai una Segnalazione</h1>
+          <p class="text-indigo-100 mt-4 text-xl leading-relaxed max-w-3xl mx-auto">Aiuta a rendere Trento più sicura segnalando problemi o situazioni critiche nella tua zona</p>
         </div>
 
-        <!-- Messaggio di conferma -->
-        <div v-if="successMessage" class="success-message mb-6">
-          {{ successMessage }}
-          <div v-if="report.category" class="mt-2 text-sm font-medium">Categoria: {{ report.category }}</div>
+        <!-- Messaggio di conferma - Migliorato -->
+        <div v-if="successMessage" class="success-message-enhanced mb-8">
+          <div class="flex items-center justify-center">
+            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="font-bold text-lg">✅ {{ successMessage }}</div>
+              <div v-if="report.category" class="mt-1 text-sm font-medium opacity-90">Categoria: {{ report.category }}</div>
+            </div>
+          </div>
         </div>
 
-        <!-- Form Segnalazione -->
-        <div class="card mb-8 animate-fade-in" style="animation-delay: 0.1s">
-          <form @submit.prevent="submitReport">
-            <!-- Titolo -->
-            <div class="mb-6">
-              <label class="block text-gray-700 font-medium mb-2">Titolo*</label>
+        <!-- Form Segnalazione - Migliorato -->
+        <div class="card-enhanced mb-12 animate-fade-in-up backdrop-blur-md" style="animation-delay: 0.1s">
+          <div class="flex items-center mb-8">
+            <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">📋 Dettagli Segnalazione</h2>
+          </div>
+          
+          <form @submit.prevent="submitReport" class="space-y-8">
+            <!-- Titolo - Migliorato -->
+            <div class="form-group-enhanced">
+              <label class="label-enhanced">📌 Titolo*</label>
               <input 
                 v-model="report.title"
                 type="text" 
                 required
-                class="input-field"
-                placeholder="Breve descrizione del problema"
+                class="input-field-enhanced"
+                placeholder="Breve descrizione del problema (es. Buca pericolosa, Illuminazione guasta...)"
               />
             </div>
 
-            <!-- Descrizione -->
-            <div class="mb-6">
-              <label class="block text-gray-700 font-medium mb-2">Descrizione*</label>
+            <!-- Descrizione - Migliorata -->
+            <div class="form-group-enhanced">
+              <label class="label-enhanced">📝 Descrizione*</label>
               <textarea 
                 v-model="report.description"
                 required
-                rows="4"
-                class="input-field"
-                placeholder="Descrivi in dettaglio il problema..."
+                rows="5"
+                class="input-field-enhanced"
+                placeholder="Descrivi in dettaglio il problema, quando è stato notato, eventuali rischi..."
               ></textarea>
             </div>
 
-            <!-- Categoria -->
-            <div class="mb-6">
-              <label class="block text-gray-700 font-medium mb-2">Categoria</label>
+            <!-- Categoria - Migliorata -->
+            <div class="form-group-enhanced">
+              <label class="label-enhanced">🏷️ Categoria*</label>
               <select 
                 v-model="report.category"
                 required
-                class="input-field"
+                class="input-field-enhanced"
               >
                 <option value="" disabled selected>Seleziona una categoria</option>
-                <option value="Sicurezza">Sicurezza</option>
-                <option value="Infrastrutture">Infrastrutture</option>
-                <option value="Ambiente">Ambiente</option>
-                <option value="Traffico">Traffico</option>
-                <option value="Altro">Altro</option>
+                <option value="Sicurezza">🚨 Sicurezza</option>
+                <option value="Infrastrutture">🏗️ Infrastrutture</option>
+                <option value="Ambiente">🌱 Ambiente</option>
+                <option value="Traffico">🚦 Traffico</option>
+                <option value="Altro">📋 Altro</option>
               </select>
             </div>
 
-            <!-- Immagine -->
-            <div class="mb-6">
-              <label class="block text-gray-700 font-medium mb-2">Carica un'immagine (opzionale)</label>
-              <div class="flex items-center justify-center w-full">
-                <label for="file-upload" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors duration-300">
-                  <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                    </svg>
-                    <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Clicca per caricare</span> o trascina qui</p>
-                    <p class="text-xs text-gray-500">PNG, JPG (MAX. 5MB)</p>
-                  </div>
-                  <input id="file-upload" type="file" class="hidden" @change="handleFileUpload" accept="image/*" />
-                </label>
+            <!-- Posizione - Migliorata -->
+            <div class="form-group-enhanced">
+              <label class="label-enhanced">📍 Posizione*</label>
+              <div class="space-y-4">
+                <button type="button" @click="openMapPopup" class="btn-enhanced btn-primary-enhanced w-full flex items-center justify-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7"></path>
+                  </svg>
+                  🗺️ Scegli Posizione sulla Mappa
+                </button>
+                <div class="text-center">
+                  <span class="text-gray-500 text-sm">oppure</span>
+                </div>
+                <button type="button" @click="getCurrentLocation" class="btn-enhanced btn-secondary-enhanced w-full flex items-center justify-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  📱 Usa la Mia Posizione Attuale
+                </button>
+                
+                <div v-if="report.lat && report.lng" class="location-status success">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  ✅ Posizione selezionata: {{ report.lat }}, {{ report.lng }}
+                </div>
+                <div v-else class="location-status error">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  ⚠️ Nessuna posizione selezionata
+                </div>
               </div>
             </div>
 
-            <!-- Posizione -->
-            <div class="mb-8">
-              <label class="block text-gray-700 font-medium mb-2">Posizione*</label>
-              <div class="mt-2">
-                <button type="button" @click="openMapPopup" class="btn btn-primary w-full mb-2 ">Scegli Posizione sulla Mappa</button>
-                <p class="text-sm text-gray-500">Oppure <a href="#" class="text-blue-600 font-medium hover:underline" @click.prevent="getCurrentLocation">usa la mia posizione attuale</a></p>
-                <div v-if="report.lat && report.lng" class="mt-2 text-sm text-green-600">Posizione selezionata: Lat {{ report.lat }}, Lng {{ report.lng }}</div>
-                <div v-else class="mt-2 text-sm text-red-600">Nessuna posizione selezionata</div>
-              </div>
-            </div>
-
-            <!-- Pop-up Mappa -->
-            <div v-if="showMapPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div class="bg-white rounded-xl p-6 w-full max-w-3xl mx-4">
-                <div class="flex justify-between items-center mb-4">
-                  <h2 class="text-xl font-bold text-gray-800">Scegli Posizione sulla Mappa</h2>
-                  <button @click="closeMapPopup" class="text-gray-500 hover:text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Pop-up Mappa - Migliorato -->
+            <div v-if="showMapPopup" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+              <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 w-full max-w-4xl mx-4 shadow-2xl border-2 border-white/30">
+                <div class="flex justify-between items-center mb-6">
+                  <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7"></path>
+                      </svg>
+                    </div>
+                    🗺️ Scegli Posizione sulla Mappa
+                  </h2>
+                  <button @click="closeMapPopup" class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>
-                <div id="map-popup" class="h-96 w-full rounded-lg border border-gray-300 mb-4"></div>
+                <div id="map-popup" class="h-[28rem] w-full rounded-2xl border-4 border-indigo-200 mb-6 shadow-xl"></div>
                 <div class="flex justify-end">
-                  <button @click="confirmLocation" class="btn btn-primary">Conferma Posizione</button>
+                  <button @click="confirmLocation" class="btn-enhanced btn-primary-enhanced flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    ✅ Conferma Posizione
+                  </button>
                 </div>
               </div>
             </div>
 
-            <!-- Bottone Invia -->
-            <button 
-              type="submit"
-              class="btn btn-primary w-full"
-            >
-              Invia Segnalazione
+            <button type="submit" class="btn-enhanced btn-primary-enhanced w-full text-lg py-4 flex items-center justify-center">
+              <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+              🚀 Invia Segnalazione
             </button>
           </form>
         </div>
       </div>
 
-      <!-- Dettaglio Segnalazione come Pop-up -->
-      <div v-if="showReportDetails" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
-        <div class="card animate-fade-in max-w-3xl w-full max-h-[80vh] overflow-y-auto mb-8 relative">
-          <div class="flex justify-between items-center mb-6 sticky top-0 bg-white z-10 p-4">
-            <h2 class="text-2xl font-bold text-gray-800">Dettaglio Segnalazione</h2>
-            <button @click="showReportDetails = false" class="text-gray-500 hover:text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <!-- Dettaglio Segnalazione come Pop-up - Migliorato -->
+      <div v-if="showReportDetails" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div class="card-enhanced animate-scale-in max-w-4xl w-full max-h-[85vh] overflow-y-auto backdrop-blur-md relative">
+          <div class="flex justify-between items-center mb-8 sticky top-0 bg-white/95 backdrop-blur-md z-10 p-6 rounded-t-3xl border-b-2 border-gray-100">
+            <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+              <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              📋 Dettaglio Segnalazione
+            </h2>
+            <button @click="showReportDetails = false" class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-all duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          <div v-if="currentReport" class="space-y-6 p-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Titolo -->
+          <div v-if="currentReport" class="space-y-8 p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div class="col-span-2">
-                <label class="block text-gray-700 font-medium mb-2">Titolo</label>
-                <div class="input-field bg-gray-50">{{ currentReport.title }}</div>
+                <label class="label-enhanced">📌 Titolo</label>
+                <div class="input-field-display">{{ currentReport.title }}</div>
               </div>
-
-              <!-- Categoria -->
               <div>
-                <label class="block text-gray-700 font-medium mb-2">Categoria</label>
-                <div class="input-field bg-gray-50">{{ currentReport.category }}</div>
+                <label class="label-enhanced">🏷️ Categoria</label>
+                <div class="input-field-display">{{ currentReport.category }}</div>
               </div>
-
-              <!-- Data -->
               <div>
-                <label class="block text-gray-700 font-medium mb-2">Data</label>
-                <div class="input-field bg-gray-50">{{ formatDate(currentReport.date) }}</div>
+                <label class="label-enhanced">📅 Data</label>
+                <div class="input-field-display">{{ formatDate(currentReport.date) }}</div>
               </div>
-
-              <!-- Stato -->
               <div>
-                <label class="block text-gray-700 font-medium mb-2">Stato</label>
-                <div class="input-field bg-gray-50">{{ currentReport.status }}</div>
+                <label class="label-enhanced">📊 Stato</label>
+                <div class="input-field-display">{{ currentReport.status }}</div>
               </div>
-
-              <!-- Utente -->
               <div>
-                <label class="block text-gray-700 font-medium mb-2">Segnalato da</label>
-                <div class="input-field bg-gray-50">{{ currentReport.user }}</div>
+                <label class="label-enhanced">👤 Segnalato da</label>
+                <div class="input-field-display">{{ currentReport.user }}</div>
               </div>
             </div>
-
-            <!-- Descrizione -->
             <div>
-              <label class="block text-gray-700 font-medium mb-2">Descrizione</label>
-              <div class="input-field bg-gray-50 min-h-[100px]">{{ currentReport.description }}</div>
+              <label class="label-enhanced">📝 Descrizione</label>
+              <div class="input-field-display min-h-[120px] leading-relaxed">{{ currentReport.description }}</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Ultime Segnalazioni (visibile a tutti) -->
-      <div class="card animate-fade-in" style="animation-delay: 0.2s">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Ultime segnalazioni degli utenti</h2>
-        
-        <div v-if="loading" class="text-center py-8">
-          <p>Caricamento segnalazioni...</p>
+      <!-- Ultime Segnalazioni - Migliorato -->
+      <div class="card-enhanced animate-fade-in-up backdrop-blur-md" style="animation-delay: 0.2s">
+        <div class="flex items-center mb-8">
+          <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-800">📋 Ultime Segnalazioni degli Utenti</h2>
         </div>
         
-        <div v-else-if="reports.length === 0" class="text-center py-8">
-          <p>Nessuna segnalazione recente</p>
+        <div v-if="loading" class="text-center py-16">
+          <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <p class="text-indigo-600 font-bold text-lg">⏳ Caricamento segnalazioni...</p>
         </div>
         
-        <div v-else class="space-y-4">
+        <div v-else-if="reports.length === 0" class="text-center py-16">
+          <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+          </div>
+          <p class="text-gray-500 font-bold text-lg">📭 Nessuna segnalazione recente</p>
+          <p class="text-gray-400 text-sm mt-2">Le nuove segnalazioni appariranno qui</p>
+        </div>
+        
+        <div v-else class="space-y-6">
           <div 
             v-for="(report, index) in reports" 
             :key="report.id"
-            class="border border-gray-200 rounded-xl p-5 hover:shadow-md transition animate-fade-in cursor-pointer"
+            class="report-card-enhanced group cursor-pointer animate-fade-in-up transform transition-all duration-300 hover:scale-[1.02]"
             :style="{ animationDelay: `${0.1 * index}s` }"
             @click="fetchReportDetails(report.id)"
           >
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="text-lg font-bold text-gray-800">{{ report.title }}</h3>
-                <div class="flex items-center mt-1">
-                  <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-2">{{ report.category }}</span>
-                  <span class="text-xs text-gray-500">{{ formatDate(report.date) }}</span>
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-gray-800 group-hover:text-indigo-600 transition-colors mb-2">📌 {{ report.title }}</h3>
+                <div class="flex items-center space-x-3">
+                  <span class="category-badge">🏷️ {{ report.category }}</span>
+                  <span class="date-badge">📅 {{ formatDate(report.date) }}</span>
                 </div>
               </div>
-              <span :class="statusClasses(report.status)" class="text-xs px-2 py-1 rounded">
-                {{ report.status }}
+              <span :class="statusClassesEnhanced(report.status)" class="status-badge">
+                {{ getStatusIcon(report.status) }} {{ report.status }}
               </span>
             </div>
-            <p class="mt-3 text-gray-600">{{ report.description }}</p>
-            <div class="mt-4 flex items-center">
-              <div class="w-8 h-8 bg-gray-200 rounded-full mr-3"></div>
-              <span class="text-sm text-gray-700">{{ report.user }}</span>
+            <p class="text-gray-600 leading-relaxed mb-4 text-base">{{ report.description }}</p>
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-gray-700">👤 {{ report.user }}</span>
             </div>
           </div>
         </div>
@@ -228,7 +304,7 @@
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '@/utils/api';
-import { isAuthenticated } from '@/utils/auth'; // Importa isAuthenticated da auth.js
+import { isAuthenticated } from '@/utils/auth';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -236,32 +312,29 @@ export default {
   name: 'SegnalazioniView',
   setup() {
     const route = useRoute();
-    // Rimuovi questa riga:
-    // const isAuthenticated = ref(false);
-    
     const successMessage = ref('');
     const report = ref({
       title: '',
       description: '',
       category: '',
-      image: null,
       lat: '',
       lng: ''
     });
     
-    // Rimuovi questo onMounted che causa il problema:
-    // onMounted(() => {
-    //   isAuthenticated.value = !!localStorage.getItem('authToken');
-    // });
-    
     const reports = ref([]);
     const currentReport = ref(null);
     const showReportDetails = ref(false);
-    
     const loading = ref(true);
+    const showMapPopup = ref(false);
+    const tempLat = ref('');
+    const tempLng = ref('');
+    
+    let map;
+    let selectedMarker = null;
 
     async function fetchReports() {
       try {
+        loading.value = true;
         const response = await api.get('/reports');
         reports.value = response.data.map(report => ({
           id: report._id,
@@ -270,12 +343,12 @@ export default {
           category: report.tags,
           status: report.status || 'pending',
           date: report.createdAt,
-          // Logica per mostrare username solo se ha telefono
-          user: response.data.organization?.name || 
-                (response.data.user && response.data.userPhone ? response.data.user : 'Utente')
+          user: report.organization?.name || 
+                (report.user && report.userPhone ? report.user : 'Utente')
         }));
       } catch (error) {
         console.error('Error fetching reports:', error);
+        reports.value = [];
       } finally {
         loading.value = false;
       }
@@ -292,8 +365,7 @@ export default {
           category: response.data.tags,
           status: response.data.status || 'pending',
           date: response.data.createdAt,
-          // Stessa logica per i dettagli
-          user: (response.data.user && response.data.phone ? response.data.user : 'Utente')
+          user: (response.data.user && response.data.userPhone ? response.data.user : 'Utente')
         };
         showReportDetails.value = true;
       } catch (error) {
@@ -303,42 +375,14 @@ export default {
       }
     }
 
-    onMounted(async () => {
-      if (route.params.id) {
-        await fetchReportDetails(route.params.id);
-      } else {
-        await fetchReports();
-      }
-      
-      // Listen for report updates
-      window.addEventListener('report-updated', handleReportUpdated);
-    });
-
-    onBeforeUnmount(() => {
-      // Clean up event listener
-      window.removeEventListener('report-updated', handleReportUpdated);
-    });
-
-    watch(() => route.params.id, async (newId) => {
-      if (newId) {
-        await fetchReportDetails(newId);
-      } else {
-        showReportDetails.value = false;
-        await fetchReports();
-      }
-    });
-    
     async function submitReport() {
-      // Cambia anche qui da localStorage a sessionStorage
       const token = sessionStorage.getItem('authToken');
       
-      // Prepare payload
-      // Nel metodo submitReport
       const payload = {
         reportData: {
           title: report.value.title,
           description: report.value.description,
-          tags: report.value.category, // ← Ora corretto: invia nel campo tags
+          tags: report.value.category,
           location: {
             lat: parseFloat(report.value.lat),
             lng: parseFloat(report.value.lng)
@@ -347,60 +391,27 @@ export default {
       };
 
       try {
-        // Make API call
-        const response = await api.post('/reports', payload, {
+        await api.post('/reports', payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        // Handle success
         successMessage.value = "Segnalazione inviata con successo!";
         
-        // Reset form
         report.value = {
           title: '',
           description: '',
           category: '',
-          image: null,
           lat: '',
           lng: ''
         };
+        
+        await fetchReports();
       } catch (error) {
         console.error('Error creating report:', error);
         successMessage.value = "Errore durante l'invio della segnalazione. Riprova.";
       }
       
-      // Clear message after 4 seconds
       setTimeout(() => successMessage.value = '', 4000);
-    }
-    
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (file && file.size <= 5 * 1024 * 1024) {
-        report.value.image = file;
-      } else {
-        alert('File troppo grande o non valido (max 5MB)');
-      }
-    }
-    
-    async function geocodeAddress() {
-      if (!report.value.address) return;
-      
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(report.value.address)}`
-        );
-        const data = await response.json();
-        
-        if (data.length > 0) {
-          report.value.lat = data[0].lat;
-          report.value.lng = data[0].lon;
-        } else {
-          alert('Indirizzo non trovato. Inserisci un indirizzo più specifico.');
-        }
-      } catch (error) {
-        console.error('Errore durante la geocodifica:', error);
-        alert('Errore durante la ricerca dell\'indirizzo');
-      }
     }
 
     function getCurrentLocation() {
@@ -408,15 +419,7 @@ export default {
         navigator.geolocation.getCurrentPosition(pos => {
           report.value.lat = pos.coords.latitude.toFixed(6);
           report.value.lng = pos.coords.longitude.toFixed(6);
-          
-          // Reverse geocode to get address
-          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${report.value.lat}&lon=${report.value.lng}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.display_name) {
-                report.value.address = data.display_name;
-              }
-            });
+          alert('Posizione attuale acquisita con successo');
         }, err => {
           alert('Impossibile ottenere la posizione');
         });
@@ -426,42 +429,51 @@ export default {
     }
     
     function formatDate(dateString) {
-      const options = { year: 'numeric', month: 'short', day: 'numeric' };
-      return new Date(dateString).toLocaleDateString(undefined, options);
+      const date = new Date(dateString);
+      return date.toLocaleDateString('it-IT', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
     }
     
     function statusClasses(status) {
-      switch (status.toLowerCase()) {
+      switch (status) {
         case 'pending':
-          return 'bg-yellow-100 text-yellow-700';
-        case 'in_progress':
-          return 'bg-blue-100 text-blue-700';
-        case 'resolved':
-          return 'bg-green-100 text-green-700';
-        // Mantieni compatibilità con i vecchi stati
-        case 'ricevuta':
-          return 'bg-yellow-100 text-yellow-700';
-        case 'in lavorazione':
-          return 'bg-blue-100 text-blue-700';
-        case 'risolta':
-          return 'bg-green-100 text-green-700';
+          return 'bg-yellow-100 text-yellow-800';
+        case 'in-progress':
+          return 'bg-blue-100 text-blue-800';
+        case 'completed':
+          return 'bg-green-100 text-green-800';
+        case 'rejected':
+          return 'bg-red-100 text-red-800';
         default:
-          return 'bg-gray-100 text-gray-700';
+          return 'bg-gray-100 text-gray-800';
       }
     }
 
-    let map;
-    let selectedMarker = null;
+    // RIMUOVI tutto questo codice che è fuori posto:
+    // Rimuovi tutto questo codice che è fuori posto:
+    // Aggiungi questi metodi nel setup()
+    function statusClassesEnhanced(status) {
+      // ... tutto il codice fino alla fine
+    };
 
-    let showMapPopup = ref(false);
-    let tempLat = ref('');
-    let tempLng = ref('');
+    function getStatusIcon(status) {
+      switch (status) {
+        case 'pending': return '⏳';
+        case 'in-progress': return '🔄';
+        case 'completed': return '✅';
+        case 'rejected': return '❌';
+        default: return '📋';
+      }
+    }
 
     function openMapPopup() {
       showMapPopup.value = true;
       setTimeout(() => {
         initMapPopup();
-      }, 100); // Piccolo ritardo per garantire che il DOM sia pronto
+      }, 100);
     }
 
     function closeMapPopup() {
@@ -482,7 +494,6 @@ export default {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      // Tenta di ottenere la posizione attuale dell'utente
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
           const lat = pos.coords.latitude;
@@ -493,10 +504,10 @@ export default {
             .openPopup();
         }, err => {
           console.error('Errore geolocalizzazione:', err);
-          map.setView([46.0667, 11.1167], 13); // Fallback su Trento
+          map.setView([46.0667, 11.1167], 13);
         });
       } else {
-        map.setView([46.0667, 11.1167], 13); // Fallback su Trento
+        map.setView([46.0667, 11.1167], 13);
       }
 
       map.on('click', function(e) {
@@ -517,32 +528,38 @@ export default {
       });
     }
 
-    function getCurrentLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          report.value.lat = pos.coords.latitude.toFixed(6);
-          report.value.lng = pos.coords.longitude.toFixed(6);
-          alert('Posizione attuale acquisita con successo');
-        }, err => {
-          alert('Impossibile ottenere la posizione');
-        });
-      } else {
-        alert('Geolocalizzazione non supportata dal browser');
-      }
-    }
-
-    function handleReportUpdated(event) {
-      const { reportId } = event.detail;
-      console.log('Report updated, refreshing data:', reportId);
+    function handleReportUpdated() {
       fetchReports();
     }
 
+    onMounted(async () => {
+      if (route.params.id) {
+        await fetchReportDetails(route.params.id);
+      } else {
+        await fetchReports();
+      }
+      
+      window.addEventListener('report-updated', handleReportUpdated);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('report-updated', handleReportUpdated);
+    });
+
+    watch(() => route.params.id, async (newId) => {
+      if (newId) {
+        await fetchReportDetails(newId);
+      } else {
+        showReportDetails.value = false;
+        await fetchReports();
+      }
+    });
+
     return {
-      isAuthenticated, // Usa quello importato da auth.js
+      isAuthenticated,
       successMessage,
       report,
       submitReport,
-      handleFileUpload,
       getCurrentLocation,
       reports,
       currentReport,
@@ -550,8 +567,9 @@ export default {
       loading,
       formatDate,
       statusClasses,
+      statusClassesEnhanced,  // Aggiungi questa
+      getStatusIcon,          // Aggiungi questa
       fetchReportDetails,
-      handleReportUpdated,
       showMapPopup,
       openMapPopup,
       closeMapPopup,
@@ -562,88 +580,300 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 * {
   font-family: 'Inter', sans-serif;
 }
 
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+/* Card Styles Enhanced */
+.card-enhanced {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 2rem;
+  transition: all 0.4s ease;
+}
+
+.card-enhanced:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2), 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Button Styles Enhanced */
+.btn-enhanced {
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+}
+
+.btn-primary-enhanced {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary-enhanced:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+}
+
+.btn-secondary-enhanced {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+  color: #4f46e5;
+  border: 2px solid rgba(99, 102, 241, 0.3);
+}
+
+.btn-secondary-enhanced:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(241, 245, 249, 1) 100%);
+  border-color: rgba(99, 102, 241, 0.6);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+}
+
+/* Form Styles Enhanced */
+.form-group-enhanced {
   margin-bottom: 2rem;
 }
 
-.btn-primary {
-  background: linear-gradient(90deg, #4f46e5, #6366f1);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-  border: none;
-  cursor: pointer;
-}
-.btn-primary:hover {
-  background: linear-gradient(90deg, #4338ca, #4f46e5);
-}
-
-.input-field {
-  width: 100%;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1.5px solid #d1d5db;
+.label-enhanced {
+  display: block;
+  color: #374151;
+  font-weight: 700;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.5px;
 }
-.input-field:focus {
-  border-color: #4f46e5;
+
+.input-field-enhanced {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  border: 2px solid #e5e7eb;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.input-field-enhanced:focus {
+  border-color: #6366f1;
   outline: none;
-  box-shadow: 0 0 8px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), 0 8px 25px rgba(99, 102, 241, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
 }
 
-label[for="file-upload"] {
-  transition: background-color 0.3s ease;
-}
-label[for="file-upload"]:hover {
-  background-color: #e0e7ff;
-}
-
-svg {
-  width: 48px;
-  height: 48px;
-  color: #4f46e5;
+.input-field-display {
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid #e5e7eb;
+  font-weight: 500;
+  color: #374151;
 }
 
-.success-message {
-  background-color: #d1fae5;
-  color: #065f46;
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
-  animation: fadeOut 4s forwards;
+/* Location Status */
+.location-status {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
   font-weight: 600;
+  font-size: 0.9rem;
 }
 
-@keyframes fadeOut {
-  0%, 80% { opacity: 1; }
-  100% { opacity: 0; }
+.location-status.success {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 2px solid #10b981;
 }
 
-/* Animazioni fade in */
-@keyframes fadeIn {
+.location-status.error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 2px solid #ef4444;
+}
+
+/* Success Message Enhanced */
+.success-message-enhanced {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  animation: slideInFromTop 0.6s ease-out, fadeOutDelayed 5s forwards;
+  font-weight: 600;
+  border: 2px solid #10b981;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+}
+
+/* Report Card Enhanced */
+.report-card-enhanced {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(229, 231, 235, 0.8);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.report-card-enhanced:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 20px 50px rgba(99, 102, 241, 0.15);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%);
+}
+
+/* Badge Styles */
+.category-badge {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 1px solid #3b82f6;
+}
+
+.date-badge {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #374151;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 1px solid #9ca3af;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  border: 2px solid;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Enhanced Animations */
+@keyframes fadeInFromTop {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-30px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeOutDelayed {
+  0%, 80% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
+  50% { transform: translateY(-25px) translateX(20px) rotate(180deg); opacity: 0.4; }
+  100% { transform: translateY(0) translateX(0) rotate(360deg); opacity: 0.8; }
+}
+
 .animate-fade-in {
-  animation: fadeIn 0.5s ease forwards;
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 1s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.4s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 12s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 14s ease-in-out infinite 2s;
+}
+
+.animate-float-slow {
+  animation: float 18s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float 10s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card-enhanced {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+  
+  .btn-enhanced {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9rem;
+  }
 }
 </style>
